@@ -54,7 +54,7 @@ const userSchema = new Schema(
 
 userSchema.pre("save" , async function(next){
     if(!this.isModified("password")) return next ();
-    this.password = bcrypt.hash(this.password , 10)
+    this.password = await bcrypt.hash(this.password , 10)
     next()
 })  // pre is middleware. donot use arrow function because they donot have acess to "this." pre should know on which context we r talking. userSchema is like class ,  encryption take time so we use async
 
