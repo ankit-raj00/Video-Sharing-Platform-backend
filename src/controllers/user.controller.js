@@ -18,7 +18,7 @@ const registerUser = asyncHandler(async(req , res , next)=>{
     //return res
 
     const{fullName , email , username , password} = req.body
-    console.log("emai :" , email);
+    //console.log("email :" , email);
 
     // if(fullName === ""){
     //     throw new ApiError(400 , "fullname is required" )
@@ -31,19 +31,26 @@ const registerUser = asyncHandler(async(req , res , next)=>{
         throw new ApiError(400 , "All fields are required")
     } 
 
-    const existingUser = User.findOne({
+    const existingUser = await User.findOne({
         $or :[{username } , {email}]           // finding in database if any one match
 
     })
+    console.log(existingUser)
     if(existingUser){
         throw new ApiError(409 , "User with email or username already exist")
     }
 
     // middleware add more fields to request . we have created multer middleware we can use to get the image .
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    //const coverImageLocalPath = req.files?.coverImage[0]?.path;
     if(!avatarLocalPath){
         throw new ApiError(400 , "Avatar file is required")
+    }
+
+
+    let coverImageLocalPath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+        coverImageLocalPath = req.files.coverImage[0].path
     }
 
 
@@ -59,10 +66,11 @@ const registerUser = asyncHandler(async(req , res , next)=>{
         avatar : avatar.url,
         coverImage : coverImage?.url || "",
         email,
-        username : username.toLoweCase(),
+        username : username.toLowerCase(),
+        password ,
 
     })
-    createdUser = await User.findById(user._id).select(
+    const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"      // use to select all exect field name password and refreshToken
     )
 
