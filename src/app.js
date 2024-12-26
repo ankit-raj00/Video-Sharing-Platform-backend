@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from "cors"
 import cookieParser from 'cookie-parser'
+import videoRouter from "./routes/video.routes.js"
 
 const app = express()
 
@@ -22,6 +23,8 @@ import userRouter from './routes/user.routes.js'
 // routes declaration
 
 app.use("/api/v1/users" , userRouter) // middleware to give acess of route to whom
+
+app.use("/api/v1/videos", videoRouter)
 
 
 

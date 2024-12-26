@@ -28,5 +28,25 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
+const deleteFromCloudinary = async (fileUrl) => {
+    try {
+        // Extract the public ID and resource type from the URL
+        const urlParts = fileUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1]; // Get the last part (e.g., t8ol3pdanrp1t4fffpxn.mp4 or hpvu8pg7rw50v7wj61ih.png)
+        const publicId = fileName.split('.')[0]; // Remove the extension (e.g., .mp4 or .png)
 
-export {uploadOnCloudinary}
+        // Determine the resource type based on the URL
+        const isVideo = fileUrl.includes('/video/');
+        const resourceType = isVideo ? 'video' : 'image';
+
+        // Delete the file from Cloudinary
+        const response = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+        return response;
+    } catch (error) {
+        console.error("Error deleting file from Cloudinary:", error);
+        return null;
+    }
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary };
+
