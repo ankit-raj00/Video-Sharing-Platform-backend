@@ -11,7 +11,7 @@ app.use(cors({
 }))
 
 app.use(express.json({limit : "16kb"}))
-app.use(express.urlencoded({extended : true , limit : "16kb"}))
+app.use(express.urlencoded({extended : true , limit : "100kb"}))
 app.use(cookieParser())
 
 
@@ -19,14 +19,17 @@ app.use(cookieParser())
 
 //route import
 import userRouter from './routes/user.routes.js'
+import commentRouter from './routes/comment.routes.js'
+import subscriptionRouter from './routes/subscription.routes.js'
 
 // routes declaration
 
 app.use("/api/v1/users" , userRouter) // middleware to give acess of route to whom
 
 app.use("/api/v1/videos", videoRouter)
+app.use("/api/v1/comments", commentRouter)
 
-
+app.use("/api/v1/subscriptions", subscriptionRouter)
 
 
 export {app}

@@ -122,9 +122,12 @@ const loginUser = asyncHandler(async(req , res, next)=>{
 
     const {email , username , password} = req.body;
 
+    console.log(req.body)
+
     if(!(username || email)){
         throw new ApiError(400 , "usename or email is requires")
     }
+    
 
     const user = await User.findOne({
         $or : [{username} , {email}]
@@ -265,6 +268,7 @@ const getCurrentUser = asyncHandler(async(req , res)=>{
 
 const updateAccountDetails = asyncHandler(async(req , res)=>{
     const {fullName , email} = req.body
+    console.log(req.body)
 
     if(!fullName || !email){
         throw new ApiError(400 , "All fields are required")
