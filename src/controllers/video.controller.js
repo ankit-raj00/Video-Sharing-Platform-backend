@@ -133,6 +133,19 @@ const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: get video by id
 
+
+    const updatedhistory = await User.findByIdAndUpdate(
+      req.user._id,
+      { $addToSet: { watchHistory: videoId } },
+      { new: true } // Return the updated document
+    ).select("-password -refreshToken");
+    
+    await Video.findByIdAndUpdate(
+      videoId,
+      { $inc: { views: 1 } }
+      ,
+      { new: true } // Return the updated document
+    );
   
     const video = await Video.findById(videoId).populate({
         path : "owner",
@@ -142,9 +155,16 @@ const getVideoById = asyncHandler(async (req, res) => {
     if(!video){
         throw new ApiError(400 , "give valid Video Id")
     }
+    
+
+    if(!updatedhistory){
+      throw new ApiError(400 , "history not updated")
+    }
+
+
 
     return res.status(200).json(
-        new ApiResponse(200 , video , "video fetched")
+        new ApiResponse(200 , {video , updatedhistory} , "video fetched")
     )
 
 
